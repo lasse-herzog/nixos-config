@@ -15,12 +15,29 @@
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
+    
+    # perform garbage collection weekly
+    gc = {
+      automatic = true;
+      dates = "weekly";
+      options = "--delete-older-than 1w";
+    };
+
+    settings.auto-optimise-store = true;
   };
   
   # Bootloader.
   boot = {
-    loader.systemd-boot.enable = true;
-    loader.efi.canTouchEfiVariables = true;
+    loader = {
+      efi.canTouchEfiVariables = true;
+
+      grub = {
+        enable = true;
+        configurationLimit = 10;
+        device = "nodev";
+      };
+    };
+
     binfmt.emulatedSystems = [ "aarch64-linux" ];
   };
     # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
@@ -32,6 +49,13 @@
   # Enable networking
   networking = {
     hostName = "nixos"; # Define your hostname.
+
+    enableIPv6  = false;
+
+    #nameservers = [
+    #  ""
+    #];
+
     networkmanager.enable = true;
 
     firewall = {
@@ -147,7 +171,7 @@
   nixpkgs.config.allowUnfree = true;
 
   programs = {
-    hyprland.enable = true;
+    river.enable = true;
   };
 
   # List packages installed in system profile. To search, run:

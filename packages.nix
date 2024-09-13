@@ -4,6 +4,7 @@
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "jetbrains-toolbox"
     "obsidian"
+    "pycharm-professional"
     "ticktick"
     "webstorm"
   ];
@@ -12,14 +13,15 @@
     linux-wifi-hotspot
 
     ticktick
-    inputs.zen-browser.packages."${system}".specific
-
     zed-editor
+    inputs.zen-browser.packages."${system}".specific
     zotero-beta
-
+    
+    jetbrains.pycharm-professional
     jetbrains.webstorm
     
     bun
+    flutter
     go
   ];
 

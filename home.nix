@@ -60,7 +60,7 @@
     git
 
     xdg-desktop-portal-gtk
-    xdg-desktop-portal-hyprland
+    xdg-desktop-portal-wlr
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -121,10 +121,17 @@
     };
   };
 
-  
+  xdg.portal = {
+    enable = true;
 
-  #gtk = {
-  #  enable = true;
-  #  theme.name = "adw-gtk3-dark";
-  #};
+    config.common.default = [
+      "wlr"
+      "gtk"
+    ];
+    
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-wlr
+      xdg-desktop-portal-gtk
+    ];
+  };
 }
