@@ -20,18 +20,14 @@
       url = "github:Kirottu/anyrun";
     };
 
-    zen-browser = {
-      url = "github:MarceColl/zen-browser-flake";
-    };
+    zen-browser.url = "github:MarceColl/zen-browser-flake";
   };
 
-  outputs = { self, nixpkgs, nixos-hardware, home-manager, ... } @ inputs: 
-  let
-    inherit (self) outputs; 
-  in {
+  outputs = inputs@{ self, nixpkgs, nixos-hardware, home-manager, ags, anyrun, zen-browser, ... }: {
     nixosConfigurations.nixos = nixpkgs.lib.nixosSystem {
-      specialArgs = { inherit inputs outputs; };
+      system = "x86_64-linux";
 
+      specialArgs = { inherit inputs; };
       modules = [
         nixos-hardware.nixosModules.lenovo-thinkpad-t490
 
@@ -39,12 +35,13 @@
 
 	      home-manager.nixosModules.home-manager
 	      {
-	        home-manager = {
-	          extraSpecialArgs = { inherit inputs outputs; };
-
-	          users.admin = import ./home.nix;
+          home-manager = {
+            extraSpecialArgs = { inherit inputs; };
+            useGlobalPkgs = true;
+            useUserPackages = true;
+            users.admin = import ./home.nix;
 	        };
-	      }
+        }
       ];
     };
   };

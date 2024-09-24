@@ -2,7 +2,7 @@
 # your system.  Help is available in the configuration.nix(5) man page
 # and in the NixOS manual (accessible by running ‘nixos-help’).
 
-{ config, pkgs, lib, ... }:
+{ lib, config, options, pkgs, inputs, ... }:
 
 {
   imports = [
@@ -28,6 +28,10 @@
   
   # Bootloader.
   boot = {
+    kernelParams = [
+      "ipv6.disable=1" # Disable IPv6 stack: https://wiki.archlinux.org/title/IPv6#Disable_functionality
+    ];
+
     loader = {
       efi.canTouchEfiVariables = true;
 
@@ -40,6 +44,14 @@
 
     binfmt.emulatedSystems = [ "aarch64-linux" ];
   };
+
+  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
+    "jetbrains-toolbox"
+    "obsidian"
+    "pycharm-professional"
+    "ticktick"
+    "webstorm"
+  ];
     # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
   # Configure network proxy if necessary
@@ -113,7 +125,6 @@
     enable = true;
     extraPackages = with pkgs; [
       intel-media-driver
-      intel-ocl
       libvdpau-va-gl
     ];
   };
@@ -166,9 +177,6 @@
       };
     };
   };
-
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
 
   programs = {
     river.enable = true;
@@ -243,6 +251,13 @@
     };
 
     upower.enable = true;
+
+    stirling-pdf = {
+      enable = true;
+      environment = {
+        SERVER_PORT = 9000;
+      };
+    };
   };
 
   # Enable the OpenSSH daemon.

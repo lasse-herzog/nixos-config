@@ -1,7 +1,9 @@
-{ config, inputs, pkgs, lib, ... }:
+{ pkgs, inputs, ... }:
 
 {
   imports = [
+    inputs.ags.homeManagerModules.default # add the ags home manager module
+    inputs.anyrun.homeManagerModules.default # add the anyrun home manager module
     ./ags
     ./anyrun
     ./fish
@@ -10,7 +12,7 @@
     ./starship
     ./wlogout
     ./packages.nix
-    ./theme.nix
+    #./theme.nix
   ];
   
   
@@ -34,16 +36,14 @@
   # The home.packages option allows you to install Nix packages into your
   # environment.
   home.packages = with pkgs; [
+    inputs.zen-browser.packages."${system}".specific
     brave
-    jetbrains-toolbox
 
     # # It is sometimes useful to fine-tune packages, for example, by applying
     # # overrides. You can do that directly here, just don't forget the
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
     # # fonts?
     (nerdfonts.override { fonts = [ "JetBrainsMono" ]; })
-    nodejs
-    obsidian
 
     texlive.combined.scheme-full
     libreoffice-fresh
@@ -57,10 +57,6 @@
     waylogout # logout functionality
     
     floorp
-    git
-
-    xdg-desktop-portal-gtk
-    xdg-desktop-portal-wlr
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage

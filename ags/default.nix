@@ -1,8 +1,5 @@
-{ inputs, pkgs, ... }:
+{ pkgs, ... }:
 {
-  # add the home manager module
-  imports = [ inputs.ags.homeManagerModules.default ];
-
   fonts.fontconfig.enable = true;
 
   home.packages = with pkgs; [

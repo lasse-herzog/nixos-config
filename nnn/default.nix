@@ -1,4 +1,4 @@
-{ pkgs, inputs, config, ... }:
+{ pkgs, ... }:
 
 {
   #home.packages = [ pkgs.nnn ];

@@ -1,10 +1,6 @@
-{ pkgs, inputs, config, ... }:
+{ pkgs, inputs, ... }:
 
 {
-  imports = [
-    inputs.anyrun.homeManagerModules.default # Import the anyrun home-manager module
-  ];
-
   programs.anyrun = {
     enable = true;
 

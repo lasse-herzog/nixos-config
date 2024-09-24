@@ -1,4 +1,4 @@
-{ pkgs, lib, inputs, ... }:
+{ lib, pkgs, ... }:
 
 {
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
@@ -11,10 +11,12 @@
 
   home.packages = with pkgs; [
     linux-wifi-hotspot
-
+    wkhtmltopdf
+   
+    protonvpn-gui
+    obsidian
     ticktick
     zed-editor
-    inputs.zen-browser.packages."${system}".specific
     zotero-beta
     
     jetbrains.pycharm-professional
@@ -23,6 +25,7 @@
     bun
     flutter
     go
+    nodejs_22
   ];
 
   xdg = {
