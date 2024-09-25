@@ -12,6 +12,7 @@
   home.packages = with pkgs; [
     linux-wifi-hotspot
     unar
+    vlc
     wkhtmltopdf
    
     protonvpn-gui
