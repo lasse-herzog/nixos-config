@@ -1,4 +1,5 @@
-{ ... } :
+{ pkgs, ... } :
 {
-  services.gnome.gnome-keyring.enable = true;
+  home.packages = [ pkgs.libsecret ];
+  services.gnome-keyring.enable = true;
 }

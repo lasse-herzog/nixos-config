@@ -11,6 +11,7 @@
     ./nnn
     ./starship
     ./wlogout
+    ./gnome_keyring.nix
     ./packages.nix
     #./theme.nix
   ];
@@ -110,6 +111,11 @@
       enable = true;
       userEmail="lasse@herzoeglich.de";
       userName="Lasse Herzog";
+      extraConfig = {
+        credential.helper = "${
+          pkgs.git.override { withLibsecret = true; }
+        }/bin/git-credential-libsecret";
+      };
     };
 
     neovim = {

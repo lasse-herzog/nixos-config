@@ -18,6 +18,7 @@
 
     anyrun = {
       url = "github:Kirottu/anyrun";
+      inputs.nixpkgs.follows = "nixpkgs";
     };
 
     zen-browser.url = "github:MarceColl/zen-browser-flake";
@@ -30,6 +31,10 @@
       specialArgs = { inherit inputs; };
       modules = [
         nixos-hardware.nixosModules.lenovo-thinkpad-t490
+
+        {
+          environment.systemPackages = [ anyrun.packages.x86_64-linux.anyrun-with-all-plugins ];
+        }
 
 	      ./configuration.nix
 
