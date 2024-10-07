@@ -8,6 +8,7 @@
     ./anyrun
     ./fish
     ./foot
+    ./gaming.home.nix
     ./nnn
     ./starship
     ./wlogout
@@ -56,8 +57,6 @@
     #   echo "Hello, ${config.home.username}!"
     # '')
     waylogout # logout functionality
-    
-    floorp
   ];
 
   # Home Manager is pretty good at managing dotfiles. The primary way to manage
@@ -117,10 +116,6 @@
         }/bin/git-credential-libsecret";
       };
     };
-
-    neovim = {
-      enable = true;
-    };
   };
 
   xdg.portal = {
@@ -136,4 +131,13 @@
       xdg-desktop-portal-gtk
     ];
   };
+
+  #catppuccin = {
+    # enable = true;
+   # accent = "lavender";
+    #flavor = "frappe";
+    #pointerCursor = {
+    #  enable = true;
+    #};
+  #};
 }

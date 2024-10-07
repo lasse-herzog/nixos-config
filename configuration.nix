@@ -6,6 +6,7 @@
 
 {
   imports = [
+    ./gaming.nix
     ./hardware-configuration.nix
     ./podman.nix
   ];
@@ -28,17 +29,12 @@
   
   # Bootloader.
   boot = {
-    kernelParams = [
-      "ipv6.disable=1" # Disable IPv6 stack: https://wiki.archlinux.org/title/IPv6#Disable_functionality
-    ];
-
     loader = {
       efi.canTouchEfiVariables = true;
 
-      grub = {
+      systemd-boot = {
         enable = true;
-        configurationLimit = 10;
-        device = "nodev";
+        configurationLimit = 1;
       };
     };
 
@@ -47,8 +43,13 @@
 
   nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
     "jetbrains-toolbox"
+    "nvidia-x11"
+    "nvidia-settings"
+    "nvidia-persistenced"
     "obsidian"
     "pycharm-professional"
+    "steam"
+    "steam-original"
     "ticktick"
     "webstorm"
   ];
@@ -110,6 +111,22 @@
     #};
   };
 
+  services.xserver.videoDrivers = [
+    "nvidia"
+  ];
+
+  hardware.nvidia = {
+    open = true;
+  };
+
+  hardware.graphics = {
+      enable32Bit = true;
+      extraPackages = with pkgs; [
+        rocm-opencl-icd
+        rocm-opencl-runtime
+      ];
+    };
+
   #Bluetooth
   hardware.bluetooth = {
     enable = true;
@@ -123,10 +140,6 @@
 
   hardware.graphics = {
     enable = true;
-    extraPackages = with pkgs; [
-      intel-media-driver
-      libvdpau-va-gl
-    ];
   };
 
   # Set your time zone.
@@ -186,23 +199,13 @@
   # $ nix search wget
   environment = {
     systemPackages = with pkgs; [
-  #  vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-  #  wget
-  #  anyrun
-      #xorg.libX11
       pmount
       foot
-      #libGL
       udisks
       via
-      #egl-wayland
-      #firefox
+      gparted # graphical partition manager
+      usbimager # put iso on usb
     ];
-
-    sessionVariables = {
-      LIBVA_DRIVER_NAME = "iHD";
-      VDPAU_DRIVER = "va_gl";
-    };
   };
 
   # Some programs need SUID wrappers, can be configured further or are
@@ -235,6 +238,13 @@
 
   # List services that you want to enable:
   services = {
+    displayManager.ly = {
+      enable = true;
+      settings = {
+	      clock = "%c";
+      };
+    };
+
     pipewire = {
       enable = true;
       alsa.enable = true;
@@ -258,6 +268,11 @@
         SERVER_PORT = 9000;
       };
     };
+  };
+
+  catppuccin = {
+    enable = true;
+    flavor = "frappe";
   };
 
   # Enable the OpenSSH daemon.
