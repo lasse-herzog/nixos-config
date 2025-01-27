@@ -1,8 +1,5 @@
 { pkgs, ... }:
-
 {
-  #home.packages = [ pkgs.nnn ];
-
   programs.nnn = {
     enable = true;
 

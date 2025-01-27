@@ -7,7 +7,7 @@
     spicePkgs = inputs.spicetify-nix.legacyPackages.${pkgs.system};
   in {
     enable = true;
-    theme = spicePkgs.themes.dribbish;
-    colorScheme = "frappe";
+    theme = spicePkgs.themes.dribbblish;
+    colorScheme = "catppuccin-frappe";
   };
 }

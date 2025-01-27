@@ -3,10 +3,25 @@
   wayland.windowManager.river = {
     enable = true;
 
+    settings = {
+      # Catppuccin Frappe
+      border-color-focused = "0xbabbf1";
+      border-color-unfocused = "0x737994";
+      border-color-urgent = "0xe5c890";
+
+      keyboard-layout = "-options grp:ctrl_space_toggle de,us";
+
+      spawn = [
+        "ags"
+        "dunst"
+        "zen"
+      ];
+    };
+
     extraConfig = ''
       #!/bin/sh
       
-      # This is the example configuration file for river.
+      # This is the example configuration file for river.p
       #
       # If you wish to edit this, you will probably want to copy it to
       # $XDG_CONFIG_HOME/river/init or $HOME/.config/river/init first.
@@ -15,10 +30,6 @@
       # documentation.
       
       # Note: the "Super" modifier is also known as Logo, GUI, Windows, Mod4, etc.
-      
-      riverctl keyboard-layout de
-      riverctl spawn ags
-      riverctl spawn dunst
       
       # Super+Shift+Return to start an instance of foot (https://codeberg.org/dnkl/foot)
       riverctl map normal Super+Shift Return spawn foot
@@ -154,11 +165,6 @@
           riverctl map $mode None XF86MonBrightnessDown spawn 'brightnessctl set 5%-'
       done
       
-      # Set background and border color
-      riverctl background-color 0x002b36
-      riverctl border-color-focused 0x93a1a1
-      riverctl border-color-unfocused 0x586e75
-      
       # Set keyboard repeat rate
       riverctl set-repeat 50 300
       
@@ -172,6 +178,6 @@
       # River will send the process group of the init executable SIGTERM on exit.
       riverctl default-layout rivertile
       rivertile -view-padding 6 -outer-padding 6 &
-    ''
-  }
+    '';
+  };
 }

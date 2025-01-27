@@ -1,3 +1,3 @@
 {...}: {
-  imports = ["./gamemode.nix"];
+  imports = [./gamemode.nix];
 }

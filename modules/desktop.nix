@@ -1,8 +1,8 @@
 {...}: {
   imports = [
-    "./base.nix"
-    "./base"
+    ./base.nix
+    ./base
 
-    "./desktop.nix"
+    ./desktop
   ];
 }

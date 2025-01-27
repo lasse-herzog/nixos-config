@@ -1,5 +1,5 @@
 {...}: {
-  programs.starship = {
+  programs.foot = {
     enable = true;
   };
 }

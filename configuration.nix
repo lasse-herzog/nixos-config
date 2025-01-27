@@ -1,22 +1,24 @@
-# Edit this configuration file to define what should be installed on
-# your system.  Help is available in the configuration.nix(5) man page
-# and in the NixOS manual (accessible by running ‘nixos-help’).
-
-{ lib, config, options, pkgs, inputs, ... }:
-
 {
+  lib,
+  pkgs,
+  ...
+}: {
   imports = [
-    ./gaming.nix
+    ./overlays.nix
+    # ./gaming.nix
+    ./audio.nix
     ./hardware-configuration.nix
+    ./nix.nix
+    ./nvidia.nix
     ./podman.nix
+    ./modules/desktop.nix
   ];
 
   nix = {
-    package = pkgs.nixFlakes;
     extraOptions = ''
       experimental-features = nix-command flakes
     '';
-    
+
     # perform garbage collection weekly
     gc = {
       automatic = true;
@@ -26,7 +28,9 @@
 
     settings.auto-optimise-store = true;
   };
-  
+
+  programs.hyprland.enable = true;
+
   # Bootloader.
   boot = {
     loader = {
@@ -38,108 +42,73 @@
       };
     };
 
-    binfmt.emulatedSystems = [ "aarch64-linux" ];
+    # binfmt.emulatedSystems = [ "aarch64-linux" ];
   };
 
-  nixpkgs.config.allowUnfreePredicate = pkg: builtins.elem (lib.getName pkg) [
-    "jetbrains-toolbox"
-    "nvidia-x11"
-    "nvidia-settings"
-    "nvidia-persistenced"
-    "obsidian"
-    "pycharm-professional"
-    "steam"
-    "steam-original"
-    "ticktick"
-    "webstorm"
+  swapDevices = [
+    {
+      device = "/var/lib/swapfile";
+      size = 16 * 1024;
+    }
   ];
-    # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
 
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) [
+      # CUDA support
+      "cuda_cudart"
+      "cuda_cccl"
+      "cuda_nvcc"
+      "libcublas"
+      "libcufft"
+      "libnpp"
+
+      "nvidia-x11"
+      "nvidia-settings"
+      "nvidia-persistenced"
+      "obsidian"
+      "spotify"
+    ];
 
   # Enable networking
   networking = {
-    hostName = "nixos"; # Define your hostname.
-
-    enableIPv6  = false;
-
-    #nameservers = [
-    #  ""
-    #];
+    hostName = "midgard"; # Define your hostname.
 
     networkmanager.enable = true;
 
     firewall = {
-      #checkReversePath = false; 
-
-      #allowedTCPPorts = [ 51820 ]; # For WireGuard protocol
-      #allowedUDPPorts = [ 51820 ]; # For WireGuard protocol
-      # if packets are still dropped, they will show up in dmesg
       logReversePathDrops = true;
       # wireguard trips rpfilter up
       extraCommands = ''
         ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --sport 51820 -j RETURN
         ip46tables -t mangle -I nixos-fw-rpfilter -p udp -m udp --dport 51820 -j RETURN
       '';
-     #  ip46tables -t mangle -I nixos-fw-rpfilter -p tcp -m tcp --sport 51820 -j RETURN
-     #  ip46tables -t mangle -I nixos-fw-rpfilter -p tcp -m tcp --dport 51820 -j RETURN
       extraStopCommands = ''
         ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --sport 51820 -j RETURN || true
         ip46tables -t mangle -D nixos-fw-rpfilter -p udp -m udp --dport 51820 -j RETURN || true
       '';
-     #  ip46tables -t mangle -D nixos-fw-rpfilter -p tcp -m tcp --sport 51820 -j RETURN || true
-     #  ip46tables -t mangle -D nixos-fw-rpfilter -p tcp -m tcp --dport 51820 -j RETURN || true
     };
-
-    #wireguard.interfaces = {
-    #  wg0 = {
-    #    ips = [ "10.2.0.2/32" ];
-    #    listenPort = 51820;
-
-    #    privateKeyFile = "./wg_privatekey";
-
-    #    peers = [
-    #      {
-    #        publicKey = Ky8glqH9vHhIoSgiKcNv0q6o0qRsjCMV5S3I2v/j6w4=;
-    #        allowedIps = [ "0.0.0.0/0" ];
-    #        endpoint = "185.183.34.27:51820";
-    #      }
-    #    ];
-    #  };
-    #};
-  };
-
-  services.xserver.videoDrivers = [
-    "nvidia"
-  ];
-
-  hardware.nvidia = {
-    open = true;
   };
 
   hardware.graphics = {
-      enable32Bit = true;
-      extraPackages = with pkgs; [
-        rocm-opencl-icd
-        rocm-opencl-runtime
-      ];
-    };
+    enable = true;
+    # enable32Bit = true;
+
+    # for Lutris
+    extraPackages = with pkgs; [
+      # rocm-opencl-icd
+      # rocm-opencl-runtime
+    ];
+  };
 
   #Bluetooth
   hardware.bluetooth = {
-    enable = true;
-    powerOnBoot = true;
+    enable = false;
+    # powerOnBoot = true;
   };
-  
+
   # KeyBoard
   hardware.keyboard = {
     qmk.enable = true;
-  };
-
-  hardware.graphics = {
-    enable = true;
   };
 
   # Set your time zone.
@@ -159,17 +128,6 @@
     LC_TELEPHONE = "de_DE.UTF-8";
     LC_TIME = "de_DE.UTF-8";
   };
-  
-  # UDev rules
-  services.udev.packages = [
-    pkgs.via
-  ];
-
-  # Configure keymap in X11
-  # services.xserver = {
-  #   layout = "de";
-  #   xkbVariant = "nodeadkeys";
-  # };
 
   # Configure console keymap
   console.keyMap = "de-latin1-nodeadkeys";
@@ -177,7 +135,7 @@
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users = {
     groups = {
-      admin = { };
+      admin = {};
     };
 
     users = {
@@ -185,55 +143,44 @@
         isNormalUser = true;
         description = "admin";
         group = "admin";
-        extraGroups = [ "networkmanager" "podman" "wheel" ];
+        extraGroups = ["networkmanager" "podman" "wheel"];
         packages = with pkgs; [];
       };
     };
-  };
-
-  programs = {
-    river.enable = true;
   };
 
   # List packages installed in system profile. To search, run:
   # $ nix search wget
   environment = {
     systemPackages = with pkgs; [
-      pmount
       foot
-      udisks
-      via
       gparted # graphical partition manager
+      # pmount
+      polkit_gnome # graphical polkit authentication agent
+      udisks
       usbimager # put iso on usb
+      via
     ];
   };
 
-  # Some programs need SUID wrappers, can be configured further or are
-  # started in user sessions.
-  # programs.mtr.enable = true;
-  # programs.gnupg.agent = {
-  #   enable = true;
-  #   enableSSHSupport = true;
-  # };
-
-  security= {
+  security = {
     rtkit.enable = true;
 
-    wrappers = {
-      pmount = {
-        setuid = true;
-        owner = "root";
-        group = "root";
-        source = "${pkgs.pmount}/bin/pmount"; 
-      };
+    # wrappers = {
+    #   pmount = {
+    #     setuid = true;
+    #     owner = "root";
+    #     group = "root";
+    #     source = "${pkgs.pmount}/bin/pmount";
+    #   };
 
-      pumount = {
-        setuid = true;
-        owner = "root";
-        group = "root";
-        source = "${pkgs.pmount}/bin/pumount";
-      };
-    };
+    #   pumount = {
+    #     setuid = true;
+    #     owner = "root";
+    #     group = "root";
+    #     source = "${pkgs.pmount}/bin/pumount";
+    #   };
+    # };
   };
 
   # List services that you want to enable:
@@ -241,20 +188,29 @@
     displayManager.ly = {
       enable = true;
       settings = {
-	      clock = "%c";
+        clock = "%c";
       };
     };
 
-    pipewire = {
-      enable = true;
-      alsa.enable = true;
-      alsa.support32Bit = true;
-      pulse.enable = true;
+    #ollama = {
+    #  enable = true;
+    #
+    #  acceleration = "cuda";
 
-      wireplumber = {
-        enable = true;
-      };
-    };
+    #  environmentVariables = {
+    #    CUDA_VISIBLE_DEVICES = "0";
+    #    OLLAMA_ORIGINS = "app://obsidian.md*";
+    #  };
+
+    #  loadModels = [
+    #    "qwen2.5:7b"
+    #  ];
+    #};
+
+    # UDev rules
+    udev.packages = [
+      pkgs.via
+    ];
 
     udisks2 = {
       enable = true;
@@ -263,7 +219,7 @@
     upower.enable = true;
 
     stirling-pdf = {
-      enable = true;
+      enable = false;
       environment = {
         SERVER_PORT = 9000;
       };
@@ -274,24 +230,6 @@
     enable = true;
     flavor = "frappe";
   };
-
-  # Enable the OpenSSH daemon.
-  # services.openssh.enable = true;
-
-  # Open ports in the firewall.
-  # networking.firewall.allowedTCPPorts = [ ... ];
-  # networking.firewall.allowedUDPPorts = [ ... ];
-  # Or disable the firewall altogether.
-  # networking.firewall.enable = false;
-  
-  #specialisation = {
-  #  gnome.configuration = {
-  #    system.nixos.tags = ["Gnome"];
-  #    # hyprland.enable = lib.mkForce false;
-  #    gnome.enable = true;
-  #  };
-  #};
-
 
   # This value determines the NixOS release from which the default
   # settings for stateful data, like file locations and database versions
