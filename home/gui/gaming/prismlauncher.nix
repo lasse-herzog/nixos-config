@@ -1,9 +1,9 @@
-{pkgs}: {
+{pkgs, ...}: {
   home.packages = with pkgs; [
-    primlauncher
+    prismlauncher
   ];
 
   home.sessionVariables = {
-    __GL_THREADED_OPTIOMIZATIONS = 0; # https://github.com/CaffeineMC/sodium/wiki/Driver-Compatibility#nvidia-threaded-optimizations-linux
+    __GL_THREADED_OPTIMIZATIONS = 0; # https://github.com/CaffeineMC/sodium/wiki/Driver-Compatibility#nvidia-threaded-optimizations-linux
   };
 }

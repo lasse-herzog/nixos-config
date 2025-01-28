@@ -144,6 +144,7 @@
         description = "admin";
         group = "admin";
         extraGroups = ["networkmanager" "podman" "wheel"];
+        shell = pkgs.fish;
         packages = with pkgs; [];
       };
     };
@@ -153,7 +154,6 @@
   # $ nix search wget
   environment = {
     systemPackages = with pkgs; [
-      foot
       gparted # graphical partition manager
       # pmount
       polkit_gnome # graphical polkit authentication agent
