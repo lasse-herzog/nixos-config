@@ -55,48 +55,23 @@
   } @ inputs: let
     inherit (inputs.nixpkgs) lib;
     inherit (inputs) agenix mysecrets;
+    inherit (self) outputs;
 
     mylib = import ./lib {inherit lib;};
     myvars = import ./vars {inherit lib;};
-
-    specialArgs = {inherit mylib mysecrets myvars agenix inputs;};
   in {
-    nixosConfigurations = {
-      midgard = nixpkgs.lib.nixosSystem {
-        system = "x86_64-linux";
-        specialArgs = specialArgs;
-        modules = [
-          ./configuration.nix
-          ./secrets
-
-          agenix.nixosModules.default
-
-          nixos-hardware.nixosModules.common-cpu-amd-pstate
-          nixos-hardware.nixosModules.common-pc-ssd
-
-          catppuccin.nixosModules.catppuccin
-          musnix.nixosModules.musnix
-
-          home-manager.nixosModules.home-manager
-          {
-            home-manager = {
-              backupFileExtension = "backup";
-              extraSpecialArgs = specialArgs;
-
-              useGlobalPkgs = true;
-              useUserPackages = true;
-
-              users.admin.imports = [
-                ./home/home.nix
-                catppuccin.homeModules.catppuccin
-                nvchad4nix.homeManagerModule
-                spicetify-nix.homeManagerModules.default
-                zen-browser.homeModules.twilight
-              ];
-            };
-          }
-        ];
-      };
-    };
+    #
+    # ========= Host Configurations =========
+    #
+    # Building configurations is available through `just rebuild` or `nixos-rebuild --flake .#hostname`
+    nixosConfigurations = builtins.listToAttrs (
+      map (host: {
+        name = host;
+        value = nixpkgs.lib.nixosSystem {
+          specialArgs = {inherit mylib mysecrets myvars agenix inputs outputs;};
+          modules = [./hosts/${host}];
+        };
+      }) (builtins.attrNames (builtins.readDir ./hosts))
+    );
   };
 }
