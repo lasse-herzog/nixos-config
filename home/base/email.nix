@@ -1,9 +1,23 @@
 {
   lib,
   config,
+  pkgs,
   ...
 }: {
+  programs.msmtp.enable = true;
   programs.neomutt.enable = true;
+
+  home.packages = with pkgs; [
+    lynx
+  ];
+
+  home.file.".mailcap" = {
+    enable = true;
+
+    text = ''
+      text/html; lynx %s
+    '';
+  };
 
   accounts.email.accounts = {
     "herzoeglich" = {

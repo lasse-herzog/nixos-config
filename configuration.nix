@@ -1,6 +1,8 @@
 {
+  config,
   lib,
   pkgs,
+  inputs,
   ...
 }: {
   imports = [
@@ -15,10 +17,29 @@
   ];
 
   nix = {
-    extraOptions = ''
-      experimental-features = nix-command flakes
-    '';
+    settings = {
+      # enable flakes globally
+      experimental-features = ["nix-command" "flakes"];
 
+      # given the users in this list the right to specify additional substituters via:
+      #    1. `nixConfig.substituers` in `flake.nix`
+      #    2. command line args `--options substituers http://xxx`
+      # trusted-users = [myvars.username];
+
+      # substituers that will be considered before the official ones(https://cache.nixos.org)
+      substituters = [
+        "https://nix-community.cachix.org"
+        # my own cache server, currently not used.
+        # "https://ryan4yin.cachix.org"
+      ];
+
+      trusted-public-keys = [
+        "nix-community.cachix.org-1:mB9FSh9qf2dCimDSUo8Zy7bkq5CX+/rkCWyvRCYg3Fs="
+        # "ryan4yin.cachix.org-1:Gbk27ZU5AYpGS9i3ssoLlwdvMIh0NxG0w8it/cv9kbU="
+      ];
+
+      builders-use-substitutes = true;
+    };
     # perform garbage collection weekly
     gc = {
       automatic = true;
@@ -52,22 +73,25 @@
     }
   ];
 
-  nixpkgs.config.allowUnfreePredicate = pkg:
-    builtins.elem (lib.getName pkg) [
-      # CUDA support
-      "cuda_cudart"
-      "cuda_cccl"
-      "cuda_nvcc"
-      "libcublas"
-      "libcufft"
-      "libnpp"
+  allowedUnfreePackages = [
+    # CUDA support
+    "cuda_cudart"
+    "cuda_cccl"
+    "cuda_nvcc"
+    "libcublas"
+    "libcufft"
+    "libnpp"
 
-      "nvidia-x11"
-      "nvidia-settings"
-      "nvidia-persistenced"
-      "obsidian"
-      "spotify"
-    ];
+    "nvidia-x11"
+    "nvidia-settings"
+    "nvidia-persistenced"
+    "obsidian"
+    "open-webui"
+    "spotify"
+  ];
+
+  nixpkgs.config.allowUnfreePredicate = pkg:
+    builtins.elem (lib.getName pkg) config.allowedUnfreePackages;
 
   # Enable networking
   networking = {
@@ -154,6 +178,7 @@
   # $ nix search wget
   environment = {
     systemPackages = with pkgs; [
+      inputs.agenix.packages.x86_64-linux.default
       gparted # graphical partition manager
       # pmount
       polkit_gnome # graphical polkit authentication agent

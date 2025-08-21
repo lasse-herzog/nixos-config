@@ -12,7 +12,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
-    agenix.url = "github:ryantm/agenix";
+    agenix.url = "github:yaxitech/ragenix";
 
     ags.url = "github:aylur/ags";
 
@@ -29,10 +29,7 @@
 
     prismlauncher.url = "github:prismlauncher/prismlauncher";
 
-    spicetify-nix = {
-      url = "github:lasse-herzog/spicetify-nix";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
+    spicetify-nix.url = "github:Gerg-L/spicetify-nix";
 
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
 
@@ -72,6 +69,8 @@
           ./configuration.nix
           ./secrets
 
+          agenix.nixosModules.default
+
           nixos-hardware.nixosModules.common-cpu-amd-pstate
           nixos-hardware.nixosModules.common-pc-ssd
 
@@ -89,9 +88,10 @@
 
               users.admin.imports = [
                 ./home/home.nix
-                catppuccin.homeManagerModules.catppuccin
+                catppuccin.homeModules.catppuccin
                 nvchad4nix.homeManagerModule
                 spicetify-nix.homeManagerModules.default
+                zen-browser.homeModules.twilight
               ];
             };
           }

@@ -1,18 +1,14 @@
 {
-  lib,
   pkgs,
   inputs,
   ...
 }: {
   home.packages = with pkgs; [
     libnotify
-    inputs.zen-browser.packages."${system}".default # Zen browser from flake
-
     linux-wifi-hotspot
     pdfannots2json # for zotero integration obsdidian plugin
     unar
     vlc
-    wkhtmltopdf
     wl-clipboard
     # clipboard-jh # the clipboard project clipboard manager
 
@@ -27,6 +23,12 @@
     prismlauncher
 
     bun
+    zathura
+
+    (clementine.override
+      {
+        config = config // {config.clementine.ipod = true;};
+      })
   ];
 
   programs = {
@@ -68,12 +70,12 @@
       enable = true;
 
       enableSshSupport = true;
-      pinentryPackage = pkgs.pinentry-curses;
+      pinentry.package = pkgs.pinentry-curses;
       sshKeys = ["3DE487830BEEE3DB641EA517DECEE352B96629E0"];
     };
   };
 
-  home.sessionVariables.DEFAULT_BROWSER = "${inputs.zen-browser.packages."${pkgs.system}".default}/bin/zen";
+  home.sessionVariables.DEFAULT_BROWSER = "${inputs.zen-browser.packages."${pkgs.system}".twilight}/bin/zen";
 
   xdg = {
     desktopEntries = {
@@ -81,18 +83,6 @@
         name = "Obsidian";
         exec = "obsidian -enable-features=UseOzonePlatform -ozone-platform=wayland %U";
         icon = "obsidian";
-      };
-    };
-
-    mimeApps = {
-      enable = true;
-
-      defaultApplications = {
-        "text/html" = "zen.desktop";
-        "x-scheme-handler/http" = "zen.desktop";
-        "x-scheme-handler/https" = "zen.desktop";
-        "x-scheme-handler/about" = "zen.desktop";
-        "x-scheme-handler/unknown" = "zen.desktop";
       };
     };
   };

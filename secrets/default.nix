@@ -26,4 +26,16 @@
     owner = "root";
     group = "root";
   };
+
+  age.secrets."openai_api_key" = {
+    # whether secrets are symlinked to age.secrets.<name>.path, defaults to true
+    # symlink = true;
+    # target path for decrypted file
+    # path = "/etc//";
+    # encrypted file path
+    file = "${mysecrets}/openai_api_key.age"; # refer to ./xxx.age located in `mysecrets` repo
+    mode = "0500";
+    owner = "admin";
+    group = "admin";
+  };
 }

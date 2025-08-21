@@ -1,4 +1,8 @@
-{pkgs, ...}: {
+{
+  pkgs,
+  osConfig,
+  ...
+}: {
   imports = [
     ./gui.nix
     ./packages.nix
@@ -30,36 +34,9 @@
     # # parentheses. Maybe you want to install Nerd Fonts with a limited number of
     # # fonts?
     nerd-fonts.jetbrains-mono
-
-    # # You can also create simple shell scripts directly inside your
-    # # configuration. For example, this adds a command 'my-hello' to your
-    # # environment:
-    # (pkgs.writeShellScriptBin "my-hello" ''
-    #   echo "Hello, ${config.home.username}!"
-    # '')
-    waylogout # logout functionality
   ];
 
-  # Home Manager is pretty good at managing dotfiles. The primary way to manage
-  # plain files is through 'home.file'.
   home.file = {
-    # # Building this configuration will create a copy of 'dotfiles/screenrc' in
-    # # the Nix store. Activating the configuration will then make '~/.screenrc' a
-    # # symlink to the Nix store copy.
-    # ".screenrc".source = dotfiles/screenrc;
-
-    # # You can also set the file content immediately.
-    # ".gradle/gradle.properties".text = ''
-    #   org.gradle.console=verbose
-    #   org.gradle.daemon.idletimeout=3600000
-    # '';
-
-    # ".config/nvim".source = fetchFromGitHub {
-    #   owner = "NvChad";
-    #   repo = "starter";
-    #   rev = "refs/heads/main";
-    #   sha256 = "sha256-2HNqPdnIVkX+d5OxjsRbL3SoY8l5Ey7/Y274Pi5uZW4=";
-    # };
   };
 
   # Home Manager can also manage your environment variables through
@@ -82,9 +59,10 @@
     EDITOR = "nvim";
     MOZ_ENABLE_WAYLAND = 1;
     CLIPBOARD_NOGUI = 1;
+    LUA_PATH = ""; # Workaround for avante nvim plugin
+    OPENAI_API_KEY = "$(cat ${osConfig.age.secrets.openai_api_key.path})";
   };
 
-  # Let Home Manager install and manage itself.
   programs = {
     git = {
       enable = true;
@@ -101,17 +79,7 @@
   xdg.portal = {
     enable = true;
 
-    config.common = {
-      default = ["gtk"];
-
-      "org.freedesktop.impl.portal.Screenshot" = ["wlr"];
-      "org.freedesktop.impl.portal.ScreenCast" = ["wlr"];
-    };
-
-    extraPortals = with pkgs; [
-      xdg-desktop-portal-wlr
-      xdg-desktop-portal-gtk
-    ];
+    config.common.default = ["hyprland"];
   };
 
   catppuccin = {

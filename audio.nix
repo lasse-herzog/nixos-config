@@ -1,5 +1,5 @@
 {...}: {
-  musnix.enable = true;
+  musnix.enable = false;
 
   services.pipewire = {
     enable = true;
