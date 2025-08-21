@@ -55,7 +55,6 @@
   } @ inputs: let
     inherit (inputs.nixpkgs) lib;
     inherit (inputs) agenix mysecrets;
-    inherit (self) outputs;
 
     mylib = import ./lib {inherit lib;};
     myvars = import ./vars {inherit lib;};
@@ -68,7 +67,7 @@
       map (host: {
         name = host;
         value = nixpkgs.lib.nixosSystem {
-          specialArgs = {inherit mylib mysecrets myvars agenix inputs outputs;};
+          specialArgs = {inherit mylib mysecrets myvars agenix inputs;};
           modules = [./hosts/${host}];
         };
       }) (builtins.attrNames (builtins.readDir ./hosts))

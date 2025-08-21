@@ -25,18 +25,21 @@
         useGlobalPkgs = true;
         useUserPackages = true;
 
-        users.admin.imports = [
-          ./home/home.nix
-          inputs.catppuccin.homeModules.catppuccin
-          inputs.nvchad4nix.homeManagerModule
-          inputs.spicetify-nix.homeManagerModules.default
-          inputs.zen-browser.homeModules.twilight
-        ];
+        users.admin.imports =
+          (map mylib.relativeToRoot [
+            "home/home.nix"
+          ])
+          ++ [
+            inputs.catppuccin.homeModules.catppuccin
+            inputs.nvchad4nix.homeManagerModule
+            inputs.spicetify-nix.homeManagerModules.default
+            inputs.zen-browser.homeModules.twilight
+          ];
       };
     }
 
     (map mylib.relativeToRoot [
-      "configuration.nix"
+      "modules/configuration.nix"
       "secrets"
     ])
   ];
