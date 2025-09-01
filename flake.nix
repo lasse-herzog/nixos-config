@@ -33,10 +33,10 @@
 
     zen-browser.url = "github:0xc000022070/zen-browser-flake";
 
-    mysecrets = {
-      url = "git+ssh://git@github.com/lasse-herzog/nix-secrets.git";
-      flake = false;
-    };
+    #mysecrets = {
+    #  url = "git+ssh://git@github.com/lasse-herzog/nix-secrets.git";
+    #  flake = false;
+    #};
   };
 
   outputs = {
