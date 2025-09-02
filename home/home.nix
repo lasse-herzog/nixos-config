@@ -60,7 +60,7 @@
     MOZ_ENABLE_WAYLAND = 1;
     CLIPBOARD_NOGUI = 1;
     LUA_PATH = ""; # Workaround for avante nvim plugin
-    OPENAI_API_KEY = "$(cat ${osConfig.age.secrets.openai_api_key.path})";
+#    OPENAI_API_KEY = "$(cat ${osConfig.age.secrets.openai_api_key.path})";
   };
 
   programs = {

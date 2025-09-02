@@ -1,18 +1,20 @@
 {
-  nixpkgs,
   inputs,
   specialArgs,
   mylib,
   lib,
   ...
 }: {
+  networking.hostName = "midgard";
+
   imports = lib.flatten [
-    ./hardware-configuration.nix
-    inputs.agenix.nixosModules.default
-
     inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
+    inputs.nixos-hardware.nixosModules.common-cpu-amd-zenpower
+    inputs.nixos-hardware.nixosModules.common-gpu-nvidia-turing
     inputs.nixos-hardware.nixosModules.common-pc-ssd
+    ./hardware-configuration.nix
 
+    inputs.agenix.nixosModules.default
     inputs.catppuccin.nixosModules.catppuccin
     inputs.musnix.nixosModules.musnix
 

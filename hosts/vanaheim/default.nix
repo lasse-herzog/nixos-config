@@ -1,18 +1,21 @@
 {
-  nixpkgs,
   inputs,
   specialArgs,
   mylib,
   lib,
   ...
 }: {
+  networking.hostName = "vanaheim";
+
+  environment.sessionVariables = {
+    WLR_DRM_DEVICES = "/dev/dri/card1";
+  };
+
   imports = lib.flatten [
+    inputs.nixos-hardware.nixosModules.framework-amd-ai-300-series
     ./hardware-configuration.nix
+
     inputs.agenix.nixosModules.default
-
-    inputs.nixos-hardware.nixosModules.common-cpu-amd-pstate
-    inputs.nixos-hardware.nixosModules.common-pc-ssd
-
     inputs.catppuccin.nixosModules.catppuccin
     inputs.musnix.nixosModules.musnix
 
@@ -40,6 +43,8 @@
 
     (map mylib.relativeToRoot [
       "modules/configuration.nix"
+      "modules/laptop/default.nix"
+      "modules/bluetooth.nix"
     ])
   ];
 }

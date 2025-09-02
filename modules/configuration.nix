@@ -57,6 +57,7 @@
       };
     };
 
+    kernelPackages = pkgs.linuxPackages_latest;
     # binfmt.emulatedSystems = [ "aarch64-linux" ];
   };
 
@@ -75,6 +76,7 @@
     "libcublas"
     "libcufft"
     "libnpp"
+    "via"
 
     "nvidia-x11"
     "nvidia-settings"
@@ -89,8 +91,6 @@
 
   # Enable networking
   networking = {
-    hostName = "midgard"; # Define your hostname.
-
     networkmanager.enable = true;
 
     firewall = {
@@ -116,12 +116,6 @@
       # rocm-opencl-icd
       # rocm-opencl-runtime
     ];
-  };
-
-  #Bluetooth
-  hardware.bluetooth = {
-    enable = false;
-    # powerOnBoot = true;
   };
 
   # KeyBoard
